@@ -15,10 +15,10 @@ const colunas = {
         allowNull: false,
         defaultValue: 0
     },
-    fonecedor: {
+    fornecedor: {
         type: Sequelize.INTEGER,
         allowNull: false,
-        refences: {
+        references: {
             model: require('../ModeloTabelaFornecedor'),
             key: 'id'
         }
