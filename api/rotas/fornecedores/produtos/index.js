@@ -1,21 +1,26 @@
-const roteador = require('express').Router({ mergeParams: true });
+const roteador = require('express').Router({mergeParams: true});
 const Tabela = require('./TabelaProduto');
 const Produto = require('./Produto');
 
 roteador.get('/', async (requisicao, resposta) => {
    const produtos = await Tabela.listar(requisicao.params.idFornecedor);
-   resposta.send(JSON.stringify(produtos)); 
+   resposta.send(JSON.stringify(produtos));
 });
 
-roteador.post('/', async (requisicao, resposta) => {
-   const idFornecedor = requisicao.params.idFornecedor;
-   const corpo = requisicao.body;
-   const dados = Object.assign({}, corpo, {fornecedor: idFornecedor});
-   const produto = new Produto(dados);
+roteador.post('/', async (requisicao, resposta, proximo) => {
+   try {
 
-   await produto.criar();
+      const idFornecedor = requisicao.params.idFornecedor;
+      const corpo = requisicao.body;
+      const dados = Object.assign({}, corpo, {fornecedor: idFornecedor});
+      const produto = new Produto(dados);
 
-   resposta.status(201).send(produto);
+      await produto.criar();
+
+      resposta.status(201).send(produto);
+   } catch (err) {
+      proximo(err);
+   }
 });
 
 roteador.delete('/:id', async (requisicao, resposta) => {
@@ -25,7 +30,7 @@ roteador.delete('/:id', async (requisicao, resposta) => {
    }
    const produto = new Produto(dados);
    await produto.apagar();
-   
+
    resposta.status(204).end();
 
 
