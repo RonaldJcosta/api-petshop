@@ -3,12 +3,12 @@ const Modelo = require('./ModeloTabelaProduto');
 module.exports = {
     listar(idFornecedor) {
         return Modelo.findAll({
-            where: { fornecedor: idFornecedor }
+            where: {fornecedor: idFornecedor}
         });
     },
 
     inserir(dados) {
-        return Modelo.create(dados); 
+        return Modelo.create(dados);
     },
 
     remover(idProduto, idFornecedor) {
@@ -18,5 +18,20 @@ module.exports = {
                 fornecedor: idFornecedor
             }
         })
+    },
+
+    pegarPorId(idProduto, idFornecedor) {
+        const encontrado = await Modelo.findOne({
+            where: {
+                id: idProduto,
+                fornecedor: idFornecedor
+            },
+            raw: true
+        })
+
+        if (!encontrado)
+            throw new Error('Produto não encontrado');
+
+        return encontrado;
     }
 }

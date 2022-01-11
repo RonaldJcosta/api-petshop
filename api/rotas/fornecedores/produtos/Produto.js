@@ -39,6 +39,15 @@ class Produto {
         return Tabela.remover(this.id, this.fornecedor)
     }
 
+    async carrefar() {
+        const produto = await Tabela.pegarPorId(this.id, this.fornecedor);
+        this.titulo = produto.titulo
+        this.preco = produto.estoque
+        this.estoque = produto.estoque
+        this.dataCriacao = produto.dataCriacao
+        this.dataAtualizacao = produto.dataAtualizacao
+        this.versao = produto.versao
+    }
 }
 
 module.exports = Produto;
