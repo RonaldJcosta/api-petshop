@@ -2,11 +2,11 @@ const ValorNaoSuportado = require('./erros/ValorNaoSuportado')
 const jsontoxml = require('jsontoxml')
 
 class Serializador {
-    json (dados) {
+    json(dados) {
         return JSON.stringify(dados)
     }
 
-    xml (dados) {
+    xml(dados) {
         let tag = this.tagSingular
 
         if (Array.isArray(dados)) {
@@ -18,10 +18,10 @@ class Serializador {
             })
         }
 
-        return jsontoxml({ [tag]: dados })
+        return jsontoxml({[tag]: dados})
     }
 
-    serializar (dados) {
+    serializar(dados) {
         dados = this.filtrar(dados)
 
         if (this.contentType === 'application/json') {
@@ -35,7 +35,7 @@ class Serializador {
         throw new ValorNaoSuportado(this.contentType)
     }
 
-    filtrarObjeto (dados) {
+    filtrarObjeto(dados) {
         const novoObjeto = {}
 
         this.camposPublicos.forEach((campo) => {
@@ -47,7 +47,7 @@ class Serializador {
         return novoObjeto
     }
 
-    filtrar (dados) {
+    filtrar(dados) {
         if (Array.isArray(dados)) {
             dados = dados.map(item => {
                 return this.filtrarObjeto(item)
@@ -61,7 +61,7 @@ class Serializador {
 }
 
 class SerializadorFornecedor extends Serializador {
-    constructor (contentType, camposExtras) {
+    constructor(contentType, camposExtras) {
         super()
         this.contentType = contentType
         this.camposPublicos = [
@@ -74,8 +74,21 @@ class SerializadorFornecedor extends Serializador {
     }
 }
 
+class SerializadorProduto extends Serializador {
+    constructor(contentType, camposExtras) {
+        super()
+        this.contentType = contentType
+        this.camposPublicos = [
+            'id',
+            'titulo'
+        ].concat(camposExtras || [])
+        this.tagSingular = 'produto'
+        this.tagPlural = 'produtos'
+    }
+}
+
 class SerializadorErro extends Serializador {
-    constructor (contentType, camposExtras) {
+    constructor(contentType, camposExtras) {
         super()
         this.contentType = contentType
         this.camposPublicos = [
@@ -87,9 +100,11 @@ class SerializadorErro extends Serializador {
     }
 }
 
+
 module.exports = {
     Serializador: Serializador,
     SerializadorFornecedor: SerializadorFornecedor,
     SerializadorErro: SerializadorErro,
+    SerializadorProduto: SerializadorProduto,
     formatosAceitos: ['application/json', 'application/xml']
 }
